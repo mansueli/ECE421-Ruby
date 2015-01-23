@@ -9,7 +9,7 @@ class SparseMatrix
   attr_accessor :elements
   attr_reader :row_number, :col_number, :sparsity
 
-  Contract Pos, Pos => nil
+  Contract Pos, Pos => {}
   ### constructor() adds an element to the matrix
   # Params:
   # @row number of rows in the matrix
