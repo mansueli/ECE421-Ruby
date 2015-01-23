@@ -20,7 +20,7 @@ class SparseMatrix
     @elements = Hash.new(0)
   end
 
-  Contract Pos, Num, Num => nil
+  Contract Not[Neg], Not[Neg], Num => nil
   ### addElement() adds an element to the matrix
   # @raise 'element exists' if the element already exists
   # Params:
@@ -35,7 +35,7 @@ class SparseMatrix
     sparsity = elements.count() /(:row_number * :col_number)
   end
 
-  Contract Pos, Pos => Num
+  Contract Not[Neg], Not[Neg] => Num
   ### constructor() get an element value from the matrix
   # Params:
   # @row the row where the element is
