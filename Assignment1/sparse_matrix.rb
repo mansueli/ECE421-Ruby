@@ -5,6 +5,10 @@ class SparseMatrix
   require 'contracts'
   include Contracts
   #TODO add invariants
+  
+  Contract.override_failure_callback do |data|
+    puts Contract::failure_msg(data)
+  end
 
   attr_accessor :elements
   attr_reader :row_number, :col_number, :sparsity
