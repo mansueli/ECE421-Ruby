@@ -4,11 +4,12 @@ class SparseMatrix
   #
   require 'contracts'
   include Contracts
+  #TODO add invariants
 
   attr_accessor :elements
   attr_reader :row_number, :col_number, :sparsity
 
-  Contract Num, Num => nil
+  Contract Pos, Pos => nil
   ### constructor() adds an element to the matrix
   # Params:
   # @row number of rows in the matrix
@@ -19,7 +20,7 @@ class SparseMatrix
     @elements = Hash.new(0)
   end
 
-  Contract Num, Num => nil
+  Contract Pos, Num, Num => nil
   ### addElement() adds an element to the matrix
   # @raise 'element exists' if the element already exists
   # Params:
@@ -34,7 +35,7 @@ class SparseMatrix
     sparsity = elements.count() /(:row_number * :col_number)
   end
 
-  Contract Num, Num => Num
+  Contract Pos, Pos => Num
   ### constructor() get an element value from the matrix
   # Params:
   # @row the row where the element is
