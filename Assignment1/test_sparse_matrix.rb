@@ -14,7 +14,8 @@ class TestSparseMatrix<Minitest::Test
     #assert(test.elements) how to test hash?
     assert(test.is_a?SparseMatrix)
     
-    test = SparseMatrix.new(0,8) #contract violation
+    test = SparseMatrix.new(1.1,8) #contract violation
+    test = SparseMatrix.new(0,3) #contract violation
     test = SparseMatrix.new(3,0) #contract violation
   end
 end

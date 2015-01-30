@@ -13,7 +13,7 @@ class SparseMatrix
   attr_accessor :elements
   attr_reader :row_number, :col_number, :sparsity
 
-  Contract Pos, Pos => {}
+  Contract And[Fixnum,Pos], And[Fixnum,Pos] => {}
   ### constructor() adds an element to the matrix
   # Params:
   # @row number of rows in the matrix
@@ -24,6 +24,7 @@ class SparseMatrix
     @elements = Hash.new(0)
   end
 
+  #TODO: should probably constrain the next contracts based on row and column not num
   Contract Not[Neg], Not[Neg], Num => nil
   ### addElement() adds an element to the matrix
   # @raise 'element exists' if the element already exists
