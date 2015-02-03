@@ -1,6 +1,6 @@
 gem "minitest"
 require 'minitest/autorun'
-require './sparse_matrix'
+require './sparse_matrix.rb'
 include Contracts
 
 class TestSparseMatrix<Minitest::Test

@@ -1,0 +1,25 @@
+*What is a sparse matrix and what features should it possess?*
+    Sparse matrix are matrix with at least 51% of its number being zero values or one with enough zeros to take advantage of. Another feature that each sparse matrix have is the sparsity which is the ratio of zero numbers to nonzero values numbers.
+
+*What sources of information should you consult to derive features? Do analogies exist? If so with what?*
+    Look at the usages of sparse matrices and existing libraries for sparse matrices (for ex. MATLAB). Could be analogous to a bridge structure where most parts of the structure are not under stress from outside forces and specific points carry the majority of the load. Solve PDEs with complex boundaries.
+
+*Who is likely to be the user of a sparse matrix package? What features are they likely to demand?*
+    Researchers (Solve PDEs), Engineers (Civil). They will probably demand:
+  Sparse Matrix Creation
+Sparse identity matrix
+Sparse distributed random matrix
+Import matrix
+Sparse Matrix Manipulation
+Determine whether input is sparse
+Number of nonzero matrix elements
+Nonzero matrix elements
+Replace nonzero sparse matrix elements with ones
+Find indices and values of nonzero elements
+Convert sparse matrix to full matrix
+Eigenvalues and eigenvectors of matrix
+Convert sparse matrix to full matrix
+Find indices and values of nonzero elements
+
+*What is a tri-diagonal matrix?*
+    It is a matrix where only numbers on the main diagonal, the diagonal above, and the diagonal below are non-zero.

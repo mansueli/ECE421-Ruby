@@ -5,7 +5,7 @@ class SparseMatrix
   require 'contracts'
   include Contracts
   #TODO add invariants
-  
+
   Contract.override_failure_callback do |data|
     puts Contract::failure_msg(data)
   end
@@ -13,7 +13,7 @@ class SparseMatrix
   attr_accessor :elements
   attr_reader :row_number, :col_number, :sparsity
 
-  Contract And[Fixnum,Pos], And[Fixnum,Pos] => {}
+  Contract And[Fixnum, Pos], And[Fixnum, Pos] => {}
   ### constructor() adds an element to the matrix
   # Params:
   # @row number of rows in the matrix
@@ -22,6 +22,27 @@ class SparseMatrix
     @row_number = row
     @col_number = col
     @elements = Hash.new(0)
+  end
+
+  Contract Num, Num => nil
+  ### scalar() multiplies the matrix by a scalar
+  # @value the scalar number
+  def scalar(value)
+    @elements.each { |key, oldValue| @elements[key] = oldValue * value }
+  end
+
+  Contract Num
+  ### scalar() multiplies the matrix by a scalar
+  # @value the scalar number to be added
+  def plus(value)
+    @elements.each { |key, oldValue| @elements[key] = oldValue + value }
+  end
+
+  Contract Num
+  ### scalar() multiplies the matrix by a scalar
+  # @value the scalar number to be subtracted
+  def minus(value)
+    @elements.each { |key, oldValue| @elements[key] = oldValue - value }
   end
 
   #TODO: should probably constrain the next contracts based on row and column not num
@@ -51,10 +72,19 @@ class SparseMatrix
     elements[[row, col]]
   end
 
-  Contract nil => Bool
-  ### whether this object is a sparse matrix of not
-  # @return a boolean value
-  def is_sparse?
-    :sparsity>0.5
-  end
-end
+  def to_s
+    (0..@row_number).map { |r|
+      (0..@col_number).map { |c|
+        self[r, c]}.join(" ")
+    }.join("\n")
+    end
+
+
+    Contract nil => Bool
+    ### whether this object is a sparse matrix of not
+    # @return a boolean value
+    def is_sparse?
+      :sparsity>0.5
+    end
+
+    end
