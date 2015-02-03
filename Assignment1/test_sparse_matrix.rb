@@ -1,6 +1,7 @@
 gem "minitest"
 require 'minitest/autorun'
 require './sparse_matrix.rb'
+require 'matrix.rb'
 include Contracts
 
 class TestSparseMatrix<Minitest::Test
@@ -17,13 +18,12 @@ class TestSparseMatrix<Minitest::Test
     #post
     assert(test.col_number = 8)
     assert(test.row_number = 3)
-    #assert(test.elements) how to test hash?
-    assert(test.is_a?SparseMatrix)
+    assert(test.elements.empty?)
   end
   
-  def test_initialize_mat    
+  def test_initialize_mat1
     #pre
-    m = Matrix.new(8, 3)
+    m = Matrix.new(8, 3){0}
     assert(m.is_a?Matrix)
     
     test = SparseMatrix.new(m)
@@ -31,6 +31,20 @@ class TestSparseMatrix<Minitest::Test
     #post
     assert_equal(m.col_number, test.col_number)
     assert_equal(m.row_number, test.row_number)
+    assert(test.elements.empty?)
+  end
+  
+  def test_initialize_mat2
+    #pre
+    m = Matrix[ [25, 0], [0, 66], [0, 0] ]
+    assert(m.is_a?Matrix)
+    
+    test = SparseMatrix.new(m)
+    
+    #post
+    assert_equal(m.col_number, test.col_number)
+    assert_equal(m.row_number, test.row_number)
+    assert_equal(test.elements, {[0,0]=>25,[1,1]=>66})
   end
   
   def test_initialize_vals    
@@ -167,7 +181,7 @@ class TestSparseMatrix<Minitest::Test
   end
   
   def test_convert_full
-    res = sparse_matrix.new({[0,0]=>1,[0,1]=>1,[0,2]=>0,[1,0]=>0,[1,1]=>0,[1,2]=>0,[2,0]=>0,[2,1]=>0,[2,2]=>3})
+    res = Matrix[[1,1,0],[0,0,0],[0,0,3]]
     m = sparse_matrix.new({[0,0]=>4,[0,1]=>7,[2,2]=>3})
     # Pre
     assert(m.responds_to?full)
@@ -175,7 +189,7 @@ class TestSparseMatrix<Minitest::Test
     test = sparse_matrix.full(m)
   
     # Post
-    assert_equal(test.elements, res.elements)
+    assert_equal(test, res)
     assert_equal(test.row_number, 3)
     assert_equal(test.col_number, 3)
   end
