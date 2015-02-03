@@ -45,7 +45,23 @@ class TestSparseMatrix<Minitest::Test
     assert_equal(4, test.row_number)
   end
   
-  def test_plus
+  ### plus tests plus and minus are essentially the same
+  
+  def test_plus_scal
+    res = SparseMatrix.new({[1,1]=>4,[2,2]=>-2,[3,3]=>8})
+    m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
+    # Pre
+    assert(m1.responds_to?plus)
+    
+    test = m1.plus(2)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.col_number, res.col_number)
+    assert_equal(test.row_number, res.row_number)
+  end
+  
+  def test_plus_mat
     res = SparseMatrix.new(4,4)
     m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
     m2 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
@@ -55,6 +71,66 @@ class TestSparseMatrix<Minitest::Test
     assert_equal(m1.row_number, m2.row_number)
     
     test = m1.plus(m2)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.col_number, res.col_number)
+    assert_equal(test.row_number, res.row_number)
+  end
+  
+  def test_plus_one_element
+    res = SparseMatrix.new({[1,1]=>-2,[2,2]=>6,[3,3]=>-6})
+    m1 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
+    # Pre
+    assert(m1.responds_to?plus)
+    
+    test = m1.plus(2, 2, 2)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.col_number, res.col_number)
+    assert_equal(test.row_number, res.row_number)
+  end
+  
+  ### mult tests mult and div are essentially the same
+  
+  def test_mult_scal
+    res = SparseMatrix.new({[1,1]=>4,[2,2]=>-4,[3,3]=>12})
+    m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
+    # Pre
+    assert(m1.responds_to?plus)
+    
+    test = m1.mult(2)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.col_number, res.col_number)
+    assert_equal(test.row_number, res.row_number)
+  end
+  
+  def test_mult_mat
+    res = SparseMatrix.new({[0,1]=>-4,[1,2]=>-16,[1,4]=>-24, [2,5]=>-36})
+    m1 = SparseMatrix.new({[0,1]=>2,[1,2]=>-4,[1,3]=>6})
+    m2 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,6]=>-6})
+    # Pre
+    assert(m1.responds_to?mult)
+    assert_equal(m1.col_number, m2.row_number)
+    
+    test = m1.mult(m2)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.col_number, res.col_number)
+    assert_equal(test.row_number, res.row_number)
+  end
+  
+  def test_mult_one_element
+    res = SparseMatrix.new({[1,1]=>-2,[2,2]=>8,[3,3]=>-6})
+    m1 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
+    # Pre
+    assert(m1.responds_to?mult)
+    
+    test = m1.plus(2, 2, 2)
   
     # Post
     assert_equal(test.elements, res.elements)
