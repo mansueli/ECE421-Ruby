@@ -31,14 +31,14 @@ class SparseMatrix
     @elements.each { |key, oldValue| @elements[key] = oldValue * value }
   end
 
-  Contract Num
+  Contract Num => nil
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be added
   def plus(value)
     @elements.each { |key, oldValue| @elements[key] = oldValue + value }
   end
 
-  Contract Num
+  Contract Num => nil
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be subtracted
   def minus(value)
