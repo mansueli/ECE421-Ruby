@@ -137,4 +137,46 @@ class TestSparseMatrix<Minitest::Test
     assert_equal(test.col_number, res.col_number)
     assert_equal(test.row_number, res.row_number)
   end
+  
+  ### tests for other features
+  
+  def test_sparse_iden_mat
+    res = sparse_matrix.new({[0,0]=> 1,[1,1]=>1,[2,2]=>1})
+    # Pre
+    
+    test = sparse_matrix.eye(3, 3)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.row_number, 3)
+    assert_equal(test.col_number, 3)
+  end
+  
+  def test_replace_nonzero
+    res = sparse_matrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
+    m = sparse_matrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
+    # Pre
+    assert(m.responds_to?replNonZero)
+    
+    test = sparse_matrix.replNonZero(1)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.row_number, 3)
+    assert_equal(test.col_number, 5)
+  end
+  
+  def test_convert_full
+    res = sparse_matrix.new({[0,0]=>1,[0,1]=>1,[0,2]=>0,[1,0]=>0,[1,1]=>0,[1,2]=>0,[2,0]=>0,[2,1]=>0,[2,2]=>3})
+    m = sparse_matrix.new({[0,0]=>4,[0,1]=>7,[2,2]=>3})
+    # Pre
+    assert(m.responds_to?full)
+    
+    test = sparse_matrix.full(m)
+  
+    # Post
+    assert_equal(test.elements, res.elements)
+    assert_equal(test.row_number, 3)
+    assert_equal(test.col_number, 3)
+  end
 end
