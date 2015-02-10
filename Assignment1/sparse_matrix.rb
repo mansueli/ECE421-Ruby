@@ -76,16 +76,7 @@ class SparseMatrix
     end
     return SparseMatrix.new(result)
   end
-        
-  Contract Num, Num => nil
-  ### scalar() multiplies the matrix by a scalar
-  # @value the scalar number
-  def scalar(value)
-    @elements.each { |key, oldValue| @elements[key] = oldValue * value }
-  end
 
-  ### scalar() multiplies the matrix by a scalar
-  # @value the scalar number to be added
   def plus(*args)
     smnew = SparseMatrix.new(elements);
     if args.size == 1
@@ -101,10 +92,13 @@ class SparseMatrix
   end
 
   Contract Num => nil
-  ### scalar() multiplies the matrix by a scalar
-  # @value the scalar number to be subtracted
-  def minus(value)
-    return plus(value*-1)
+  def minus(*args)
+    if args.size == 1
+      return plus(args[0]*-1)
+    else
+      args[2] = args[2]*-1
+      return plus(*args)
+    end
   end
 
   def mult(*args)
