@@ -11,7 +11,8 @@ result = SparseMatrix.new(m)
 #create a sparse matrix from a hash
 h = {[1, 1] => 2, [2, 2] => -4, [3, 3] => 6}
 result = SparseMatrix.new(h)
-
+#change a single value
+result[1, 0] = -4
 #add/subtract each element of sparse matrix by a scalar
 m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
 result = m1.plus(2)
