@@ -3,6 +3,7 @@ class SparseMatrix
   # @Author Aditya Bhargava
   #
   require 'contracts'
+  require 'matrix.rb'
   include Contracts
   #TODO add invariants
 
@@ -29,19 +30,21 @@ class SparseMatrix
     end
   end
 
-  Contract And[Fixnum, Pos], And[Fixnum, Pos] => {}
+  Contract And[Fixnum, Pos], And[Fixnum, Pos] => Hash
   def init_dimens(row, col)
     @row_number = row
     @col_number = col
     @elements = Hash.new(0)
   end
   
+  Contract Hash => Hash
   def init_vals(elements)
     @row_number = elements.keys.max_by{|k| k[0]}[0] + 1
     @col_number = elements.keys.max_by{|k| k[1]}[1] + 1
     @elements = elements
   end
   
+  Contract Matrix => Matrix
   def init_mat(mat)
     @row_number = mat.row_size
     @col_number = mat.column_size
