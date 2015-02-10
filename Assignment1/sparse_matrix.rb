@@ -41,7 +41,7 @@ class SparseMatrix
   def init_vals(elements)
     @row_number = elements.keys.max_by{|k| k[0]}[0] + 1
     @col_number = elements.keys.max_by{|k| k[1]}[1] + 1
-    @elements = elements
+    @elements = elements.delete_if {|k, v| v == 0}
   end
   
   Contract Matrix => Matrix
@@ -55,6 +55,28 @@ class SparseMatrix
     end
   end
   
+  def combine(other)
+    result = Hash.new(0)
+    self.row_number.times do |r|
+      self.col_number.times do |c|
+        result[[r,c]] = yield(self.getElement(r,c), other.getElement(r,c))
+      end
+    end
+    return SparseMatrix.new(result)
+  end
+  
+  def mcombine(other)
+    result = Hash.new(0)
+    other.col_number.times do |oc|
+      self.row_number.times do |r|
+        self.col_number.times do |c|
+          result[[r,oc]] += yield(self.getElement(r,c), other.getElement(c,oc))
+        end
+      end
+    end
+    return SparseMatrix.new(result)
+  end
+        
   Contract Num, Num => nil
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number
@@ -65,16 +87,15 @@ class SparseMatrix
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be added
   def plus(*args)
-    smnew = SparseMatrix.new(self.row_number, self.col_number);
+    smnew = SparseMatrix.new(elements);
     if args.size == 1
-      if args[0].respond_to?(:+)
-        #TODO 
+      if args[0].respond_to?(:combine)
+        smnew = smnew.combine(args[0]) {|e1,e2| e1 + e2}
       else
-        #line below errors, undefined method '[]' ??
-        #@elements.each { |key, oldValue| smnew.elements[key] = oldValue + value }
+        elements.each { |key, oldValue| smnew.elements[key] = oldValue + args[0] }
       end
     else
-      #TODO
+      smnew.elements[[args[0],args[1]]] = elements[[args[0],args[1]]] + args[2]
     end
     return smnew
   end
@@ -83,19 +104,34 @@ class SparseMatrix
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be subtracted
   def minus(value)
-    return plus(-1*value)
+    return plus(value*-1)
   end
 
   def mult(*args)
-    smnew = SparseMatrix.new(self.row_number, self.col_number);
-    
-    #TODO
+    smnew = SparseMatrix.new(elements);
+    if args.size == 1
+      if args[0].respond_to?(:mcombine)
+        smnew = smnew.mcombine(args[0]) {|e1,e2| e1 * e2}
+      else
+        elements.each { |key, oldValue| smnew.elements[key] = oldValue * args[0] }
+      end
+    else
+      smnew.elements[[args[0],args[1]]] = elements[[args[0],args[1]]] * args[2]
+    end
     return smnew
   end
   
   def div(*args)
-    inv = *args;  #handle different cases
-    #TODO
+    if args.size == 1
+        if args[0].respond_to?(:mcombine)
+          inv = SparseMatrix.new(args[0].full().inverse())
+        else
+          inv = 1/args[0]
+        end
+      else
+        args[2] = 1/args[2]
+        inv = *args
+    end
     return mult(inv);
   end  
   
@@ -144,7 +180,6 @@ class SparseMatrix
     if value == 0 && row <= :row_number && col <= :col_number
       elements[[row, col]] = value
     end
-    sparsity = elements.count() /(:row_number * :col_number)
   end
 
   Contract Not[Neg], Not[Neg] => Num
@@ -155,7 +190,7 @@ class SparseMatrix
   #
   # @return the requested element
   def getElement(row, col)
-    elements[[row, col]]
+    elements[[row, col]] || 0
   end
 
   def to_s
@@ -170,6 +205,7 @@ class SparseMatrix
   ### whether this object is a sparse matrix of not
   # @return a boolean value
   def is_sparse?
+    sparsity = elements.count() /(:row_number * :col_number)
     :sparsity>0.5
   end
   
