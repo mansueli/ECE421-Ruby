@@ -62,20 +62,61 @@ class SparseMatrix
     @elements.each { |key, oldValue| @elements[key] = oldValue * value }
   end
 
-  Contract Num => nil
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be added
-  def plus(value)
-    @elements.each { |key, oldValue| @elements[key] = oldValue + value }
+  def plus(*args)
+    smnew = SparseMatrix.new(self.row_number, self.col_number);
+    if args.size == 1
+      if args[0].respond_to?(:+)
+        #TODO 
+      else
+        #line below errors, undefined method '[]' ??
+        #@elements.each { |key, oldValue| smnew.elements[key] = oldValue + value }
+      end
+    else
+      #TODO
+    end
+    return smnew
   end
 
   Contract Num => nil
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be subtracted
   def minus(value)
-    plus(-1*value)
+    return plus(-1*value)
   end
 
+  def mult(*args)
+    smnew = SparseMatrix.new(self.row_number, self.col_number);
+    #TODO
+    return smnew
+  end
+  
+  def div(*args)
+    inv = *args;  #handle different cases
+    #TODO
+    return mult(inv);
+  end  
+    
+  def replNonZero(*args)
+    smnew = SparseMatrix.new(self.row_number, self.col_number);
+    #TODO
+    return smnew
+  end
+  
+  def full()
+    mnew = Matrix.build(self.row_number, self.col_number){};
+    #TODO
+    return mnew
+  end
+  
+  Contract Fixnum, Fixnum => SparseMatrix
+  def self.eye(row, col)
+    smnew = SparseMatrix.new(row, col);
+    #TODO
+    return smnew
+  end
+  
   #TODO: should probably constrain the next contracts based on row and column not num
   Contract Not[Neg], Not[Neg], Num => nil
   ### addElement() adds an element to the matrix
@@ -117,4 +158,6 @@ class SparseMatrix
   def is_sparse?
     :sparsity>0.5
   end
+  
+  private :init_dimens, :init_vals, :init_mat
 end

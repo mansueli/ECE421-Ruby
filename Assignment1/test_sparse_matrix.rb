@@ -65,7 +65,7 @@ class TestSparseMatrix<Minitest::Test
     res = SparseMatrix.new({[1,1]=>4,[2,2]=>-2,[3,3]=>8})
     m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
     # Pre
-    assert(m1.responds_to?plus)
+    assert(m1.respond_to? 'plus')
     
     test = m1.plus(2)
   
@@ -80,7 +80,7 @@ class TestSparseMatrix<Minitest::Test
     m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
     m2 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
     # Pre
-    assert(m1.responds_to?plus)
+    assert(m1.respond_to? 'plus')
     assert_equal(m1.col_number, m2.col_number)
     assert_equal(m1.row_number, m2.row_number)
     
@@ -96,7 +96,7 @@ class TestSparseMatrix<Minitest::Test
     res = SparseMatrix.new({[1,1]=>-2,[2,2]=>6,[3,3]=>-6})
     m1 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
     # Pre
-    assert(m1.responds_to?plus)
+    assert(m1.respond_to? 'plus')
     
     test = m1.plus(2, 2, 2)
   
@@ -112,7 +112,7 @@ class TestSparseMatrix<Minitest::Test
     res = SparseMatrix.new({[1,1]=>4,[2,2]=>-4,[3,3]=>12})
     m1 = SparseMatrix.new({[1,1]=>2,[2,2]=>-4,[3,3]=>6})
     # Pre
-    assert(m1.responds_to?plus)
+    assert(m1.respond_to?'plus')
     
     test = m1.mult(2)
   
@@ -127,7 +127,7 @@ class TestSparseMatrix<Minitest::Test
     m1 = SparseMatrix.new({[0,1]=>2,[1,2]=>-4,[1,3]=>6})
     m2 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,6]=>-6})
     # Pre
-    assert(m1.responds_to?mult)
+    assert(m1.respond_to?'mult')
     assert_equal(m1.col_number, m2.row_number)
     
     test = m1.mult(m2)
@@ -142,9 +142,9 @@ class TestSparseMatrix<Minitest::Test
     res = SparseMatrix.new({[1,1]=>-2,[2,2]=>8,[3,3]=>-6})
     m1 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
     # Pre
-    assert(m1.responds_to?mult)
+    assert(m1.respond_to?'mult')
     
-    test = m1.plus(2, 2, 2)
+    test = m1.mult(2, 2, 2)
   
     # Post
     assert_equal(test.elements, res.elements)
@@ -155,10 +155,10 @@ class TestSparseMatrix<Minitest::Test
   ### tests for other features
   
   def test_sparse_iden_mat
-    res = sparse_matrix.new({[0,0]=> 1,[1,1]=>1,[2,2]=>1})
+    res = SparseMatrix.new({[0,0]=> 1,[1,1]=>1,[2,2]=>1})
     # Pre
     
-    test = sparse_matrix.eye(3, 3)
+    test = SparseMatrix.eye(3, 3)
   
     # Post
     assert_equal(test.elements, res.elements)
@@ -167,12 +167,12 @@ class TestSparseMatrix<Minitest::Test
   end
   
   def test_replace_nonzero
-    res = sparse_matrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
-    m = sparse_matrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
+    res = SparseMatrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
+    m = SparseMatrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
     # Pre
-    assert(m.responds_to?replNonZero)
+    assert(m.respond_to?'replNonZero')
     
-    test = sparse_matrix.replNonZero(1)
+    test = m.replNonZero(1)
   
     # Post
     assert_equal(test.elements, res.elements)
@@ -182,15 +182,15 @@ class TestSparseMatrix<Minitest::Test
   
   def test_convert_full
     res = Matrix[[1,1,0],[0,0,0],[0,0,3]]
-    m = sparse_matrix.new({[0,0]=>4,[0,1]=>7,[2,2]=>3})
+    m = SparseMatrix.new({[0,0]=>4,[0,1]=>7,[2,2]=>3})
     # Pre
-    assert(m.responds_to?full)
+    assert(m.respond_to?'full')
     
-    test = sparse_matrix.full(m)
+    test = m.full()
   
     # Post
     assert_equal(test, res)
-    assert_equal(test.row_number, 3)
-    assert_equal(test.col_number, 3)
+    assert_equal(test.row_size, 3)
+    assert_equal(test.col_size, 3)
   end
 end
