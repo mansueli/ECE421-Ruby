@@ -158,7 +158,7 @@ class TestSparseMatrix<Minitest::Test
     res = SparseMatrix.new({[0,0]=> 1,[1,1]=>1,[2,2]=>1})
     # Pre
     
-    test = SparseMatrix.eye(3, 3)
+    test = SparseMatrix.eye(3)
   
     # Post
     assert_equal(test.elements, res.elements)
@@ -168,7 +168,7 @@ class TestSparseMatrix<Minitest::Test
   
   def test_replace_nonzero
     res = SparseMatrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
-    m = SparseMatrix.new({[0,0]=> 1,[0,1]=>1,[2,4]=>1})
+    m = SparseMatrix.new({[0,0]=>3,[0,1]=>4,[2,4]=>1})
     # Pre
     assert(m.respond_to?'replNonZero')
     
@@ -181,7 +181,7 @@ class TestSparseMatrix<Minitest::Test
   end
   
   def test_convert_full
-    res = Matrix[[1,1,0],[0,0,0],[0,0,3]]
+    res = Matrix[[4,7,0],[0,0,0],[0,0,3]]
     m = SparseMatrix.new({[0,0]=>4,[0,1]=>7,[2,2]=>3})
     # Pre
     assert(m.respond_to?'full')
@@ -191,6 +191,6 @@ class TestSparseMatrix<Minitest::Test
     # Post
     assert_equal(test, res)
     assert_equal(test.row_size, 3)
-    assert_equal(test.col_size, 3)
+    assert_equal(test.column_size, 3)
   end
 end

@@ -88,6 +88,7 @@ class SparseMatrix
 
   def mult(*args)
     smnew = SparseMatrix.new(self.row_number, self.col_number);
+    
     #TODO
     return smnew
   end
@@ -97,23 +98,36 @@ class SparseMatrix
     #TODO
     return mult(inv);
   end  
-    
-  def replNonZero(*args)
-    smnew = SparseMatrix.new(self.row_number, self.col_number);
-    #TODO
+  
+  Contract Fixnum => SparseMatrix
+  def replNonZero(value)
+    smnew = SparseMatrix.new(self.elements);
+    smnew.elements.each_key{|key| smnew.elements[key] = value}
     return smnew
   end
   
+  Contract nil => Matrix
   def full()
-    mnew = Matrix.build(self.row_number, self.col_number){};
-    #TODO
+    a = []
+    self.row_number.times do |r|
+      b = []
+      self.col_number.times do |c|
+        if getElement(r,c) != nil
+          b.push(getElement(r,c))
+        else
+          b.push(0)
+        end
+      end
+      a.push(b)
+    end
+    
+    mnew = Matrix.rows(a)
     return mnew
   end
   
-  Contract Fixnum, Fixnum => SparseMatrix
-  def self.eye(row, col)
-    smnew = SparseMatrix.new(row, col);
-    #TODO
+  Contract Fixnum => SparseMatrix
+  def self.eye(dimen)
+    smnew = SparseMatrix.new(Matrix.identity(dimen))
     return smnew
   end
   
@@ -160,4 +174,9 @@ class SparseMatrix
   end
   
   private :init_dimens, :init_vals, :init_mat
+  
+  alias + plus
+  alias - minus
+  alias * mult
+  alias / div
 end
