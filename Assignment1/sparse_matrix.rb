@@ -83,15 +83,14 @@ class SparseMatrix
       if args[0].respond_to?(:combine)
         smnew = smnew.combine(args[0]) {|e1,e2| e1 + e2}
       else
-        elements.each { |key, oldValue| smnew.elements[key] = oldValue + args[0] }
+        smnew.elements.each { |key, oldValue| smnew.elements[key] = oldValue + args[0] }
       end
     else
-      smnew.elements[[args[0],args[1]]] = elements[[args[0],args[1]]] + args[2]
+      smnew.elements[[args[0],args[1]]] = getElement(args[0], args[1]) + args[2]
     end
     return smnew
   end
 
-  Contract Num => nil
   def minus(*args)
     if args.size == 1
       return plus(args[0]*-1)
@@ -107,10 +106,10 @@ class SparseMatrix
       if args[0].respond_to?(:mcombine)
         smnew = smnew.mcombine(args[0]) {|e1,e2| e1 * e2}
       else
-        elements.each { |key, oldValue| smnew.elements[key] = oldValue * args[0] }
+        smnew.elements.each { |key, oldValue| smnew.elements[key] = oldValue * args[0] }
       end
     else
-      smnew.elements[[args[0],args[1]]] = elements[[args[0],args[1]]] * args[2]
+      smnew.elements[[args[0],args[1]]] = getElement(args[0], args[1]) * args[2]
     end
     return smnew
   end
@@ -122,11 +121,11 @@ class SparseMatrix
         else
           inv = 1/args[0]
         end
+        return mult(inv)
       else
         args[2] = 1/args[2]
-        inv = *args
+        return mult(*args)
     end
-    return mult(inv);
   end  
   
   Contract Fixnum => SparseMatrix
@@ -188,8 +187,8 @@ class SparseMatrix
   end
 
   def to_s
-    (0..@row_number).map { |r|
-      (0..@col_number).map { |c|
+    (0..@row_number-1).map { |r|
+      (0..@col_number-1).map { |c|
         self[r, c]}.join(" ")
     }.join("\n")
   end
@@ -209,4 +208,5 @@ class SparseMatrix
   alias - minus
   alias * mult
   alias / div
+  alias [] getElement
 end
