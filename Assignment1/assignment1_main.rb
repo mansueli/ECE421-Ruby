@@ -9,7 +9,7 @@ m = Matrix[ [25, 0], [0, 66], [0, 0] ]
 result = SparseMatrix.new(m)
 
 #create a sparse matrix from a hash
-h = {[1,1]=>2,[2,2]=>-4,[3,3]=>6};
+h = {[1, 1] => 2, [2, 2] => -4, [3, 3] => 6}
 result = SparseMatrix.new(h)
 
 #add/subtract each element of sparse matrix by a scalar

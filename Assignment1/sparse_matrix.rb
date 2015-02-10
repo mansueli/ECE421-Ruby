@@ -1,18 +1,19 @@
 class SparseMatrix
-  # Contracts.ruby (http://egonschiele.github.io/contracts.ruby/)
-  # @Author Aditya Bhargava
+  # Contracts.ruby (http://egonschiele.github.io/contracts.ruby/)  -> @Author Aditya Bhargava
+  #
+  #Sparse Matrix
+  #@Authors Rodrigo Mansueli Nunes & Andy Yao
   #
   require 'contracts'
   require 'matrix.rb'
   include Contracts
-  #TODO add invariants
 
   Contract.override_failure_callback do |data|
     puts Contract::failure_msg(data)
   end
 
   attr_accessor :elements
-  attr_reader :row_number, :col_number, :sparsity
+  attr_reader :row_size, :column_size, :sparsity
 
   ### constructor() adds an element to the matrix
   # Params:
@@ -30,55 +31,52 @@ class SparseMatrix
     end
   end
 
+  def [](*keys)
+    @elements[keys]
+  end
+
+  def []=(*keys, val)
+    @elements[keys] = val
+  end
   Contract And[Fixnum, Pos], And[Fixnum, Pos] => Hash
   def init_dimens(row, col)
-    @row_number = row
-    @col_number = col
+    @row_size = row
+    @column_size = col
     @elements = Hash.new(0)
   end
   
   Contract Hash => Hash
   def init_vals(elements)
-    @row_number = elements.keys.max_by{|k| k[0]}[0] + 1
-    @col_number = elements.keys.max_by{|k| k[1]}[1] + 1
-    @elements = elements.delete_if {|k, v| v == 0}
+    @row_size = elements.keys.max_by { |k| k[0] }[0] + 1
+    @column_size = elements.keys.max_by { |k| k[1] }[1] + 1
+    @elements = elements.delete_if { |_, v| v == 0 }
   end
   
   Contract Matrix => Matrix
   def init_mat(mat)
-    @row_number = mat.row_size
-    @col_number = mat.column_size
+    @row_size = mat.row_size
+    @column_size = mat.column_size
     @elements = Hash.new(0)
     
     mat.each_with_index do |e, row, col|
       @elements[[row,col]] = e if e != 0
     end
   end
-  
+
   def combine(other)
     result = Hash.new(0)
-    self.row_number.times do |r|
-      self.col_number.times do |c|
-        result[[r,c]] = yield(self.getElement(r,c), other.getElement(r,c))
-      end
-    end
-    return SparseMatrix.new(result)
-  end
-  
-  def mcombine(other)
-    result = Hash.new(0)
-    other.col_number.times do |oc|
-      self.row_number.times do |r|
-        self.col_number.times do |c|
+    other.column_size.times do |oc|
+      self.row_size.times do |r|
+        self.column_size.times do |c|
           result[[r,oc]] += yield(self.getElement(r,c), other.getElement(c,oc))
         end
       end
     end
-    return SparseMatrix.new(result)
+    SparseMatrix.new(result)
   end
 
   def plus(*args)
-    smnew = SparseMatrix.new(elements);
+    smnew = SparseMatrix.new(elements)
     if args.size == 1
       if args[0].respond_to?(:combine)
         smnew = smnew.combine(args[0]) {|e1,e2| e1 + e2}
@@ -88,59 +86,60 @@ class SparseMatrix
     else
       smnew.elements[[args[0],args[1]]] = getElement(args[0], args[1]) + args[2]
     end
-    return smnew
+    smnew
   end
 
   def minus(*args)
     if args.size == 1
-      return plus(args[0]*-1)
+      plus(args[0]*-1)
     else
       args[2] = args[2]*-1
-      return plus(*args)
+      plus(*args)
     end
   end
 
   def mult(*args)
-    smnew = SparseMatrix.new(elements);
+    smnew = SparseMatrix.new(elements)
     if args.size == 1
-      if args[0].respond_to?(:mcombine)
-        smnew = smnew.mcombine(args[0]) {|e1,e2| e1 * e2}
+      if args[0].respond_to?(:combine)
+        smnew = smnew.combine(args[0]) { |e1, e2| e1 * e2 }
       else
         smnew.elements.each { |key, oldValue| smnew.elements[key] = oldValue * args[0] }
       end
     else
       smnew.elements[[args[0],args[1]]] = getElement(args[0], args[1]) * args[2]
     end
-    return smnew
+    smnew
   end
   
   def div(*args)
     if args.size == 1
-        if args[0].respond_to?(:mcombine)
-          inv = SparseMatrix.new(args[0].full().inverse())
+      if args[0].respond_to?(:combine)
+        inv = SparseMatrix.new(args[0].full.inverse)
         else
           inv = 1/args[0]
         end
-        return mult(inv)
+      mult(inv)
       else
         args[2] = 1/args[2]
-        return mult(*args)
+        mult(*args)
     end
   end  
   
   Contract Fixnum => SparseMatrix
   def replNonZero(value)
-    smnew = SparseMatrix.new(self.elements);
+    smnew = SparseMatrix.new(self.elements)
     smnew.elements.each_key{|key| smnew.elements[key] = value}
-    return smnew
+    smnew
   end
   
   Contract nil => Matrix
+  # @return complete matrix
   def full()
     a = []
-    self.row_number.times do |r|
+    self.row_size.times do |r|
       b = []
-      self.col_number.times do |c|
+      self.column_size.times do |c|
         if getElement(r,c) != nil
           b.push(getElement(r,c))
         else
@@ -149,18 +148,14 @@ class SparseMatrix
       end
       a.push(b)
     end
-    
     mnew = Matrix.rows(a)
-    return mnew
   end
   
   Contract Fixnum => SparseMatrix
   def self.eye(dimen)
     smnew = SparseMatrix.new(Matrix.identity(dimen))
-    return smnew
   end
-  
-  #TODO: should probably constrain the next contracts based on row and column not num
+
   Contract Not[Neg], Not[Neg], Num => nil
   ### addElement() adds an element to the matrix
   # @raise 'element exists' if the element already exists
@@ -170,7 +165,7 @@ class SparseMatrix
   # @value the value to put in this position of the matrix
   def addElement(row, col, value)
     raise 'element exists' unless elements[[row, col]] == 0
-    if value == 0 && row <= :row_number && col <= :col_number
+    if value == 0 && row <= @row_size && col <= @column_size
       elements[[row, col]] = value
     end
   end
@@ -187,8 +182,8 @@ class SparseMatrix
   end
 
   def to_s
-    (0..@row_number-1).map { |r|
-      (0..@col_number-1).map { |c|
+    (0..@row_size-1).map { |r|
+      (0..@column_size-1).map { |c|
         self[r, c]}.join(" ")
     }.join("\n")
   end
@@ -198,8 +193,8 @@ class SparseMatrix
   ### whether this object is a sparse matrix of not
   # @return a boolean value
   def is_sparse?
-    sparsity = elements.count() /(:row_number * :col_number)
-    :sparsity>0.5
+    sparsity = (elements.count * 1.0) /(@row_size * @column_size)
+    sparsity<0.5
   end
   
   private :init_dimens, :init_vals, :init_mat

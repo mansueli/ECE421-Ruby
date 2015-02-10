@@ -16,8 +16,8 @@ class TestSparseMatrix<Minitest::Test
     test = SparseMatrix.new(3,8)
     
     #post
-    assert_equal(test.col_number, 8)
-    assert_equal(test.row_number, 3)
+    assert_equal(test.column_size, 8)
+    assert_equal(test.column_size, 3)
     assert(test.elements.empty?)
   end
   
@@ -29,8 +29,8 @@ class TestSparseMatrix<Minitest::Test
     test = SparseMatrix.new(m)
     
     #post
-    assert_equal(m.column_size, test.col_number)
-    assert_equal(m.row_size, test.row_number)
+    assert_equal(m.column_size, test.column_size)
+    assert_equal(m.row_size, test.column_size)
     assert(test.elements.empty?)
   end
   
@@ -42,21 +42,21 @@ class TestSparseMatrix<Minitest::Test
     test = SparseMatrix.new(m)
     
     #post
-    assert_equal(m.column_size, test.col_number)
-    assert_equal(m.row_size, test.row_number)
+    assert_equal(m.column_size, test.column_size)
+    assert_equal(m.row_size, test.column_size)
     assert_equal(test.elements, {[0, 0]=>25, [1, 1]=>66})
   end
   
   def test_initialize_vals    
     #pre
-    m = {[1,1]=>2,[2,2]=>-4,[3,3]=>6};
+    m = {[1, 1] => 2, [2, 2] => -4, [3, 3] => 6}
     assert(m.is_a?Hash)
     
     test = SparseMatrix.new(m)
     
     #post
-    assert_equal(4, test.col_number)
-    assert_equal(4, test.row_number)
+    assert_equal(4, test.column_size)
+    assert_equal(4, test.column_size)
   end
   
   ### plus tests plus and minus are essentially the same
@@ -71,8 +71,8 @@ class TestSparseMatrix<Minitest::Test
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.col_number, res.col_number)
-    assert_equal(test.row_number, res.row_number)
+    assert_equal(test.column_size, res.column_size)
+    assert_equal(test.column_size, res.column_size)
   end
   
   def test_plus_mat
@@ -81,15 +81,15 @@ class TestSparseMatrix<Minitest::Test
     m2 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,3]=>-6})
     # Pre
     assert(m1.respond_to? 'plus')
-    assert_equal(m1.col_number, m2.col_number)
-    assert_equal(m1.row_number, m2.row_number)
+    assert_equal(m1.column_size, m2.column_size)
+    assert_equal(m1.column_size, m2.column_size)
     
     test = m1.plus(m2)
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.col_number, res.col_number)
-    assert_equal(test.row_number, res.row_number)
+    assert_equal(test.column_size, res.column_size)
+    assert_equal(test.column_size, res.column_size)
   end
   
   def test_plus_one_element
@@ -102,8 +102,8 @@ class TestSparseMatrix<Minitest::Test
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.col_number, res.col_number)
-    assert_equal(test.row_number, res.row_number)
+    assert_equal(test.column_size, res.column_size)
+    assert_equal(test.column_size, res.column_size)
   end
   
   ### mult tests mult and div are essentially the same
@@ -118,8 +118,8 @@ class TestSparseMatrix<Minitest::Test
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.col_number, res.col_number)
-    assert_equal(test.row_number, res.row_number)
+    assert_equal(test.column_size, res.column_size)
+    assert_equal(test.column_size, res.column_size)
   end
   
   def test_mult_mat
@@ -128,14 +128,14 @@ class TestSparseMatrix<Minitest::Test
     m2 = SparseMatrix.new({[1,1]=>-2,[2,2]=>4,[3,6]=>-6})
     # Pre
     assert(m1.respond_to?'mult')
-    assert_equal(m1.col_number, m2.row_number)
+    assert_equal(m1.column_size, m2.column_size)
     
     test = m1.mult(m2)
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.col_number, res.col_number)
-    assert_equal(test.row_number, res.row_number)
+    assert_equal(test.column_size, res.column_size)
+    assert_equal(test.column_size, res.column_size)
   end
   
   def test_mult_one_element
@@ -148,8 +148,8 @@ class TestSparseMatrix<Minitest::Test
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.col_number, res.col_number)
-    assert_equal(test.row_number, res.row_number)
+    assert_equal(test.column_size, res.column_size)
+    assert_equal(test.column_size, res.column_size)
   end
   
   ### tests for other features
@@ -162,8 +162,8 @@ class TestSparseMatrix<Minitest::Test
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.row_number, 3)
-    assert_equal(test.col_number, 3)
+    assert_equal(test.column_size, 3)
+    assert_equal(test.column_size, 3)
   end
   
   def test_replace_nonzero
@@ -176,8 +176,8 @@ class TestSparseMatrix<Minitest::Test
   
     # Post
     assert_equal(test.elements, res.elements)
-    assert_equal(test.row_number, 3)
-    assert_equal(test.col_number, 5)
+    assert_equal(test.column_size, 3)
+    assert_equal(test.column_size, 5)
   end
   
   def test_convert_full
@@ -185,8 +185,8 @@ class TestSparseMatrix<Minitest::Test
     m = SparseMatrix.new({[0,0]=>4,[0,1]=>7,[2,2]=>3})
     # Pre
     assert(m.respond_to?'full')
-    
-    test = m.full()
+
+    test = m.full
   
     # Post
     assert_equal(test, res)
