@@ -13,17 +13,45 @@ class SparseMatrix
   attr_accessor :elements
   attr_reader :row_number, :col_number, :sparsity
 
-  Contract And[Fixnum, Pos], And[Fixnum, Pos] => {}
   ### constructor() adds an element to the matrix
   # Params:
   # @row number of rows in the matrix
   # @col number of columns in the matrix
-  def initialize(row, col)
+  def initialize(*args)
+    if args.size == 1
+      if args[0].is_a?Matrix
+        init_mat(*args)
+      else 
+        init_vals(*args)
+      end 
+    else
+      init_dimens(*args)
+    end
+  end
+
+  Contract And[Fixnum, Pos], And[Fixnum, Pos] => {}
+  def init_dimens(row, col)
     @row_number = row
     @col_number = col
     @elements = Hash.new(0)
   end
-
+  
+  def init_vals(elements)
+    @row_number = elements.keys.max_by{|k| k[0]}[0] + 1
+    @col_number = elements.keys.max_by{|k| k[1]}[1] + 1
+    @elements = elements
+  end
+  
+  def init_mat(mat)
+    @row_number = mat.row_size
+    @col_number = mat.column_size
+    @elements = Hash.new(0)
+    
+    mat.each_with_index do |e, row, col|
+      @elements[[row,col]] = e if e != 0
+    end
+  end
+  
   Contract Num, Num => nil
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number
@@ -42,7 +70,7 @@ class SparseMatrix
   ### scalar() multiplies the matrix by a scalar
   # @value the scalar number to be subtracted
   def minus(value)
-    @elements.each { |key, oldValue| @elements[key] = oldValue - value }
+    plus(-1*value)
   end
 
   #TODO: should probably constrain the next contracts based on row and column not num
@@ -77,14 +105,13 @@ class SparseMatrix
       (0..@col_number).map { |c|
         self[r, c]}.join(" ")
     }.join("\n")
-    end
+  end
 
 
-    Contract nil => Bool
-    ### whether this object is a sparse matrix of not
-    # @return a boolean value
-    def is_sparse?
-      :sparsity>0.5
-    end
-
-    end
+  Contract nil => Bool
+  ### whether this object is a sparse matrix of not
+  # @return a boolean value
+  def is_sparse?
+    :sparsity>0.5
+  end
+end

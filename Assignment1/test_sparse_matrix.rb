@@ -8,29 +8,29 @@ class TestSparseMatrix<Minitest::Test
   
   def test_initialize_dimens    
     #pre
-    row = 3
-    col = 8
+    rows = 3
+    cols = 8
     assert(rows > 0)
     assert(cols > 0)
     
     test = SparseMatrix.new(3,8)
     
     #post
-    assert(test.col_number = 8)
-    assert(test.row_number = 3)
+    assert_equal(test.col_number, 8)
+    assert_equal(test.row_number, 3)
     assert(test.elements.empty?)
   end
   
   def test_initialize_mat1
     #pre
-    m = Matrix.new(8, 3){0}
+    m = Matrix.build(8, 3){0}
     assert(m.is_a?Matrix)
     
     test = SparseMatrix.new(m)
     
     #post
-    assert_equal(m.col_number, test.col_number)
-    assert_equal(m.row_number, test.row_number)
+    assert_equal(m.column_size, test.col_number)
+    assert_equal(m.row_size, test.row_number)
     assert(test.elements.empty?)
   end
   
@@ -42,9 +42,9 @@ class TestSparseMatrix<Minitest::Test
     test = SparseMatrix.new(m)
     
     #post
-    assert_equal(m.col_number, test.col_number)
-    assert_equal(m.row_number, test.row_number)
-    assert_equal(test.elements, {[0,0]=>25,[1,1]=>66})
+    assert_equal(m.column_size, test.col_number)
+    assert_equal(m.row_size, test.row_number)
+    assert_equal(test.elements, {[0, 0]=>25, [1, 1]=>66})
   end
   
   def test_initialize_vals    
