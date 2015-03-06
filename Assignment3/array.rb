@@ -1,4 +1,4 @@
-#require './preconditions'
+require './preconditions'
 
 class Array
   include Preconditions
