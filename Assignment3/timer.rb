@@ -8,6 +8,7 @@ class Timer
   def initialize(object, seconds)
     #preconditions
     is_number? seconds
+    is_negative? seconds
     #main execution
     @seconds = seconds
     @object = object
@@ -16,6 +17,6 @@ class Timer
   def method_missing(name, *args, &block)
     Timeout::timeout(seconds) { object.send(name, *args, &block) }
   rescue Timeout::Error
-    raise ContractViolation "The process timed out"
+    raise ContractViolation.exception "The process timed out"
   end
 end

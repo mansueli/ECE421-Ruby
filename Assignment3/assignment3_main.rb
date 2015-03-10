@@ -20,3 +20,9 @@ va_sorted.each { |k| p k.age.to_s }
 p 'sort by name size'
 va_sorted = va.quick_sort { |x, y| x.name.length > y.name.length }
 va_sorted.each { |k| p k.name }
+vaa = Array.new (1000) {|x| x = Random.new.rand(0..1000)}
+ac=vaa.timed_out(5).quick_sort
+p ac
+boo = vaa.timed_out().quick_sort
+cavalo = ['aa','g','ff','z','b']
+p cavalo.quick_sort

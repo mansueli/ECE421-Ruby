@@ -1,14 +1,18 @@
 require './contract_violation'
 module Preconditions
   def is_trivial_block?(&block)
-    raise ContractViolation "Trivial Block is not allowed" if block == Proc.new {}
+    raise ContractViolation.exception "Trivial Block is not allowed" if block == Proc.new {}
   end
 
   def is_enumerable?(array)
-    raise Contract Violation array.all? { |i| i.is_a? Fixnum }
+    raise ContractViolation.exception array.all? { |i| i.is_a? Fixnum }
   end
 
   def is_number?(x)
-    raise ContractViolation "This parameter should be an Integer" unless x.respond_to? (:to_i)
+    raise ContractViolation.exception "This parameter should be a number" unless x.is_a? Numeric
+  end
+
+  def is_negative?(x)
+    raise ContractViolation.exception "Time must be a positive number" unless x>0
   end
 end

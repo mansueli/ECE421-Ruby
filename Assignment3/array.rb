@@ -1,11 +1,14 @@
+require 'timeout'
 require './preconditions'
+require './contract_violation'
+include Preconditions
 
 class Array
   include Preconditions
-  class << self
-    def timeout(seconds = 10)
+
+  def timed_out(seconds = 10)
       Timer.new(self, seconds)
-    end
+      self
   end
 
   def quick_sort &block
