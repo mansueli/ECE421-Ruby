@@ -1,11 +1,15 @@
+=begin
+      Parallel Sorter - ECE 421 Assignment 3
+      @Authors Rodrigo Mansueli & Andy Yao
+
+      Description: Contract Violation class
+=end
 class ContractViolation < StandardError
-  attr_reader :cause
-
-  def initialize cause
-    @cause = cause
-  end
-
   DEFAULT_MESSAGE = "Contract Violation"
+
+  # Exception
+  # @param e exception
+  # @param msg [String] error message
 
   def self.[](e, msg = DEFAULT_MESSAGE)
     e2 = new(e)

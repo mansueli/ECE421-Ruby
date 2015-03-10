@@ -1,3 +1,9 @@
+=begin
+      Parallel Sorter - ECE 421 Assignment 3
+      @Authors Rodrigo Mansueli & Andy Yao
+
+      Description: Demo of functionality
+=end
 require './array.rb'
 require './timer.rb'
 require './vaca.rb'

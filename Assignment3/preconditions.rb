@@ -1,3 +1,9 @@
+=begin
+      Array extensions - ECE 421 Assignment 3
+      @Authors Rodrigo Mansueli & Andy Yao
+
+      Description: Preconditions statements to protect the code
+=end
 require './contract_violation'
 module Preconditions
   def is_trivial_block?(&block)

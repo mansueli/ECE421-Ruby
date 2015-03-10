@@ -1,3 +1,9 @@
+=begin
+      Array extensions - ECE 421 Assignment 3
+      @Authors Rodrigo Mansueli & Andy Yao
+
+      Description: Adds timeout and parallel quick sort to the Class Array
+=end
 require 'timeout'
 require './preconditions'
 require './contract_violation'
@@ -6,11 +12,16 @@ include Preconditions
 class Array
   include Preconditions
 
+  # Gives a time for the object to execute it´s method
+  # @param secounds [Numeric] amount of time
+  # @raise exception [ContractViolation] when the method did not complete withing the time given
   def timed_out(seconds = 10)
       Timer.new(self, seconds)
       self
   end
 
+  # Sorts the array
+  # @param block comparator block (optional)
   def quick_sort &block
     #preconditions
     begin
