@@ -8,7 +8,7 @@ class Gameview < Gtk::Builder
     @game.newGame('otto')
     @control = PlayerController.instance
   end
-  
+
   def createGUI(xml)
     super()
     self.add_from_file(xml)
@@ -37,25 +37,25 @@ class Gameview < Gtk::Builder
   def start()
     #TODO
   end
-  
+
   def gametype()
     #TODO
   end
-  
+
   def difficulty()
     #TODO
   end
-  
+
   #this is button handler for player
   def player(col)
     #TODO
   end
-  
+
   #this makes the computer move
   def comp()
     #TODO
   end
-  
+
   #this redisplays the board after a move
   def update()
     self['boardGrid'] = Gtk::Table.new()

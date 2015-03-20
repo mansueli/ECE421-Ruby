@@ -11,7 +11,7 @@ class Game
   def newGame(type)
     if type == 'otto'
       @players=['o','t']
-      else
+    else
       @players=['red','blue']
     end
     @type = type
@@ -19,11 +19,11 @@ class Game
     @currentTurn = true
     @view = GameView.instance
   end
- 
+
   def updateViews()
 
   end
-  
+
   def makeMove(move)
     if(currentTurn)
       for i in 6..0
@@ -43,4 +43,4 @@ class Game
     self.currentTurn = !currentTurn
     updateViews()
   end
- end
+end

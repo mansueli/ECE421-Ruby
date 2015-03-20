@@ -1,7 +1,7 @@
 class Player
   @allowed_types = ['human','bot_easy','bot_hard']
   attr_accessor :name
-  
+
   def initialize(name)
     @name = name
   end

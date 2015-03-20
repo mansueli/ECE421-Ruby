@@ -12,6 +12,9 @@ include Preconditions
 class Array
   include Preconditions
 
+  #causes exceptions to propagate up through program threads
+  Thread.abort_on_exception=true
+
   # Gives a time for the object to execute it´s method
   # @param secounds [Numeric] amount of time
   # @raise exception [ContractViolation] when the method did not complete withing the time given
@@ -42,8 +45,16 @@ class Array
     left_thread = Thread.new { l = less.quick_sort &block }
     right_thread = Thread.new { g = greater_equals.quick_sort &block }
     # Process.waitall
-    left_thread.join
-    right_thread.join
+    begin
+      left_thread.join
+      right_thread.join
+    rescue ThreadError => te
+      puts "EXCEPTION: #{te.inspect}"
+      puts "MESSAGE: #{te.message}"
+    rescue RunTimeError => re
+      puts "EXCEPTION: #{re.inspect}"
+      puts "MESSAGE: #{re.message}"
+    end
     return l.+ [pivot] + g
   end
 end
