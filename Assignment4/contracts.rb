@@ -12,11 +12,12 @@ module Contracts
   
   def makeMove_pre(maker, move, game)
     assert((maker.is_a?(player) || maker.is_a?(computer)), "invalid move maker")
-    assert game.currentTurn == maker, "not your turn"
-    assert game.state[move].include?(0), "invalid move"
+    assert game.pTurn[game.currentTurn] == maker, "not your turn"
+    assert game.state.column(move).include?(Disc.new()), "invalid move"
   end
   
-  def makeMove_post(maker, move, game)
-    #TODO
+  def makeMove_post(maker, row, col, game)
+    assert game.state.element(row, col).type == game.players[game.currentTurn]
   end
+
 end
