@@ -15,7 +15,7 @@
     </columns>
   </object>
   <object class="GtkIconFactory" id="iconfactory1"/>
-  <object class="GtkWindow" id="main">
+  <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkVPaned" id="vpaned1">

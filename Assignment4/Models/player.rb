@@ -1,13 +1,16 @@
 class Player
-  
-  attr_accessor :type
+  @allowed_types = ['human','bot_easy','bot_hard']
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+  end
 
   def initialize()
     @type = 'empty'
-    @allowed_types = ['human','bot_easy','bot_hard']
   end
 
-  def type=(x)
-    @type = x if (@allowed_types.include?(x))
+  def name=(x)
+    @name = x if (@allowed_types.include?(x))
   end
 end

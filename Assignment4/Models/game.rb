@@ -33,14 +33,13 @@ class Game
   def makeMove(move, player)
     placed = nil
 
-    if(@pTurn[currentTurn].eql? player)
-      
+    if(@pturn[currentTurn] == player)
       placed = false
-      for i in 0..5
-        if(@state.element(5-i,move).type == 'empty')
-          @state.element(5-i,move).type = players[currentTurn]
+      for i in 6..0
+        if(@state.element(i,move).type=='empty')
+          @state.element(i,move).type = players[currentTurn]
           placed = true
-          if(win(5-i, move, currentTurn))
+          if(win(i, move, currentTurn))
             puts "Player #{currentTurn+1} wins"
             updateViews()
             #TODO end game here somehow
@@ -49,19 +48,13 @@ class Game
           self.currentTurn = (currentTurn + 1) %2
 
           #makes computer move, there should be a better way to do this...
-          if (@pTurn[currentTurn].type != 'human')
-            if (@pTurn[currentTurn].type != 'bot_easy')
+          if (@pTurn[currentTurn].name != 'human')
+            if (@pTurn[currentTurn].name != 'bot_easy')
               level = 0
             else
               level = 1
             end
             makeMove(Computer.makeMove(level, self, @pTurn[currentTurn]), @pTurn[currentTurn])
-            if(win(5-i, move, currentTurn))
-	      puts "Computer #{currentTurn+1} wins"
-	      updateViews()
-	      #TODO end game here somehow
-            return true
-          end
           end
           ###
 
@@ -79,126 +72,63 @@ class Game
     return false
   end
 
+  #TODO check win for TOOT/OTTO
   def win(rows, cols, currentTurn)
-    if (@type == 'otto') 
-      #check rows for win
-      val = ""
-      @state.row(rows).each do |p|
-        val = val + p.type
-      end
-      
-      if (val.include? "otto" )|| (val.include? "toot")
-	return true
-      end
-    
-      #check columns for win
-      val = ""
-      @state.column(cols).each do |p|
-        val = val + p.type
-      end
+    count = 0
 
-      if (val.include? "otto") || (val.include? "toot")
-	return true
-      end
-
-      #check diagonals for win
-      val = ""
-      total = rows + cols
-      if (total < 9 && total > 2)
-        for c in 0..6
-          if (total - c) >= 0 && (total + c) < 6
-            val = val + @state.element(total-c, c).type
-          end          
-        end
-      end
-
-      if (val.include? "otto") || (val.include? "toot")
-	return true
-      end
-    
-      count = 0
-      total = (rows - cols).abs
-      if total < 4
-        for c in 0..6
-          if (total + c) < 6
-            val = val + @state.element(total+c, c).type
-          end
-        end
-      end
-     
-      if (val.include? "otto") || (val.include? "toot")
-	return true
-      end
-
-      return false
-
-    else
-
-      count = 0
-
-      #check rows for win
-      @state.row(rows).each do |p|
-        if count == 4
-          return true
-        end
-        if p.type == players[currentTurn]
-          count = count + 1
-        else
-          count = 0
-        end
-      end
-    
-      #check columns for win
-      count = 0
-      @state.column(cols).each do |p|
-        if count == 4
-          return true
-        end
-        if p.type == players[currentTurn]
-          count = count + 1
-        else
-          count = 0
-        end
-      end
-
-      #check diagonals for win
-      count = 0
-      total = rows + cols
-      if (total < 9) && (total > 2)
-        for c in 0..6
-          if (total - c) >= 0 && (total + c) < 6
-            if @state.element(total-c, c).type == players[currentTurn]
-              count = count + 1
-            end
-          end
-        end
-      end
-
+    #check rows for win
+    game.state.row(rows).each do |p|
       if count == 4
         return true
       end
-    
-      count = 0
-      total = (rows - cols).abs
-      if total < 4
-        for c in 0..6
-          if count == 4
-            return true
-          end
-          if (total + c) < 6
-            if @state.element(total+c, c).type == players[currentTurn]
-              count = count + 1
-            end
-          end          
-        end
+      if p.type == players[currentTurn]
+        count = count + 1
+      else
+        count = 0
       end
-
-      if count == 4
-        return true
-      end
-
-      return false
     end
+    
+    #check columns for win
+    count = 0
+    game.state.column(cols).each do |p|
+      if count == 4
+        return true
+      end
+      if p.type == players[currentTurn]
+        count = count + 1
+      else
+        count = 0
+      end
+    end
+
+    #check diagonals for win
+    count = 0
+    total = rows + cols
+    if (total < 9 && total > 2)
+      for c in 0..6
+        if count == 4
+          return true
+        end
+        if game.state.element(total-c, c).type == players[currentTurn]
+          count = count + 1
+        end
+      end
+    end
+    
+    count = 0
+    total = (rows - cols).abs
+    if total < 4
+      for c in 0..6
+        if count == 4
+          return true
+        end
+        if game.state.element(total+c, c).type == players[currentTurn]
+          count = count + 1
+        end
+      end
+    end
+
+    return false
   end
 
 end

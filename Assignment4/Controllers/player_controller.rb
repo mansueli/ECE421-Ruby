@@ -1,7 +1,5 @@
 class PlayerController
-  attr_reader :game, :player
-
-  def initialize(game, player)
+  def intialize(game, player)
     @game = game
     @player = player
   end
