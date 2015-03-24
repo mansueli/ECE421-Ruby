@@ -26,8 +26,9 @@ class Gameview < Gtk::Builder
         button = Gtk::Button.new
         button.set_image(image)
         button.signal_connect("clicked") {
-          @control1.makeMove(col)
-          @control2.makeMove(col)
+          if (!@control1.makeMove(col))
+            @control2.makeMove(col)
+          end
           p "click #{col.to_s}.#{row.to_s}"
           image = Gtk::Image.new("#{@game.state[col,row].type}.png")
           button.set_image(image)
@@ -49,8 +50,9 @@ class Gameview < Gtk::Builder
         button = Gtk::Button.new
         button.set_image(image)
         button.signal_connect("clicked") {
-          @control1.makeMove(col)
-          @control2.makeMove(col)
+          if (!@control1.makeMove(col))
+            @control2.makeMove(col)
+          end
           p "click #{col.to_s}.#{row.to_s}"
           image = Gtk::Image.new("#{@game.state[col,row].type}.png")
           button.set_image(image)
