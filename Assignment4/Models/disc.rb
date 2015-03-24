@@ -1,8 +1,9 @@
 class Disc
-  @allowed_types = ['empty','blue','red','t','o']
-  @type = ''
+  attr_reader :type
+
   def initialize()
     @type = 'empty'
+    @allowed_types = ['empty','blue','red','t','o']
   end
 
   def type=(x)
