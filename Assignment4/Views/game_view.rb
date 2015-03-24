@@ -1,12 +1,17 @@
 require 'gtk2'
 require '../Models/game.rb'
+require '../Models/player.rb'
 require '../Controllers/player_controller.rb'
+
 class Gameview < Gtk::Builder
-  attr_accessor :game, :control
+  attr_accessor :game, :control1, :control2
   def initialize()
     @game = Game.instance
-    @game.newGame('otto')
-    @control = PlayerController.instance
+    @player1 = Player.new()  #set the players from GUI
+    @player2 = Player.new()
+    @game.newGame('otto', self, @player1, @player2)
+    @control1 = PlayerController.new(@game, @player1)
+    @control2 = PlayerController.new(@game, @player2)
   end
 
   def createGUI(xml)
@@ -21,7 +26,8 @@ class Gameview < Gtk::Builder
         button = Gtk::Button.new
         button.set_image(image)
         button.signal_connect("clicked") {
-          @control.makeMove(col)
+          @control1.makeMove(col)
+          @control2.makeMove(col)
           p "click #{col.to_s}.#{row.to_s}"
           image = Gtk::Image.new("#{@game.state[col,row].type}.png")
           button.set_image(image)
@@ -31,29 +37,6 @@ class Gameview < Gtk::Builder
     end
     self['boardGrid'].show
     self['main'].show_all
-  end
-
-  #next 3 are button handlers for game setup
-  def start()
-    #TODO
-  end
-
-  def gametype()
-    #TODO
-  end
-
-  def difficulty()
-    #TODO
-  end
-
-  #this is button handler for player
-  def player(col)
-    #TODO
-  end
-
-  #this makes the computer move
-  def comp()
-    #TODO
   end
 
   #this redisplays the board after a move
@@ -66,7 +49,8 @@ class Gameview < Gtk::Builder
         button = Gtk::Button.new
         button.set_image(image)
         button.signal_connect("clicked") {
-          @control.makeMove(col)
+          @control1.makeMove(col)
+          @control2.makeMove(col)
           p "click #{col.to_s}.#{row.to_s}"
           image = Gtk::Image.new("#{@game.state[col,row].type}.png")
           button.set_image(image)
@@ -76,11 +60,12 @@ class Gameview < Gtk::Builder
     end
   end
 end
+
 if __FILE__ == $0
 
   Gtk.init
   xml = 'main.glade'
   v = Gameview.new()
-  builder = createGUI('main.glade')
+  builder = v.createGUI('main.glade')
   Gtk.main
 end
