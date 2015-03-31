@@ -34,4 +34,8 @@ module ClientContracts
     assert game.pTurn[game.currentTurn] == me, "not your turn"
     #message received from server
   end
+
+  def isServerResponsive?
+    #@TODO verify if the server crashed and display a message
+  end
 end

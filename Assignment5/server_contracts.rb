@@ -37,8 +37,11 @@ module ServerContracts
     assert game.state.element(row, col).type == game.players[game.currentTurn]
     #game state change reflected server side
   end
-
   def game_over(game)
     #end the game specified on database
+  end
+
+  def isClientsResponsive?
+    #@TODO verify if the client crashed and make give the win to the other player
   end
 end
