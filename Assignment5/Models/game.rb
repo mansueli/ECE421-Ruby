@@ -29,12 +29,42 @@ class Game
     @server = XMLRPC::Client.new(ENV['HOSTNAME'], "/RPC2", 50525)
   end
 
+  def newGameS(type, gview, p1, p2)
+    @pTurn = [p1, p2]
+    if type == 'otto'
+      @players=['o','t']
+    else
+      @players=['red','blue']
+    end
+    @type = type
+    @state = Matrix.build(6,7) {Disc.new()}
+    @view = gview
+    @server = XMLRPC::Client.new(ENV['HOSTNAME'], "/RPC2", 50525)
+    @game_id, @currentTurn = @server.call('move.createGame', p1.name, type)
+    puts @game_id
+    puts @currentTurn
+  end
+
+  def loadGame(type, gview, p1, p2, state = nil)
+    @server = XMLRPC::Client.new(ENV['HOSTNAME'], "/RPC2", 50525)
+    @pTurn = [p1, p2]
+    if type == 'otto'
+      @players=['o','t']
+    else
+      @players=['red','blue']
+    end
+    @type = type
+    @state = state
+    @currentTurn = 0
+    @view = gview
+  end
+
   def updateViews(val = false)
     @view.update(val)
   end
 
   def recvMove(player)
-    makeMove(@server.call('move.recvMove', player), player)
+    return @server.call('move.recvMove', @game_id, player.name)
   end
 
   #will only make the move if its the players turn
@@ -42,18 +72,26 @@ class Game
     #Contracts.makeMove_pre(player, move, self)
     placed = nil
 
-    puts @server.call('move.recvMove', 'test')
+    puts player.type
+    puts @pTurn[currentTurn].eql? player
 
-    if(@pTurn[currentTurn].eql? player)
-      
+    if (@pTurn[currentTurn].type == 'server_human')
+      move = recvMove(@pTurn[currentTurn])
+      player = @pTurn[currentTurn]
+    end
+
+    if(@pTurn[currentTurn].eql? player && move != -1)
       placed = false
+
       for i in 0..5
         if(@state.element(5-i,move).type == 'empty')
           @state.element(5-i,move).type = players[currentTurn]
           placed = true
-          #@server.call('move.makeMove', @pTurn.index(player), move)
+          @server.call('move.makeMove', @game_id, player.name, move)
+
           if(draw())
             puts "Game is draw"
+            @server.call('move.game_over', 0)
             updateViews(true)
             #TODO end game here somehow
             return true
@@ -61,10 +99,12 @@ class Game
 
           if(win(5-i, move, currentTurn))
             puts "Player #{currentTurn+1} wins"
+            @server.call('move.game_over', 1, player)
             updateViews(true)
             #TODO end game here somehow
             return true
           end
+
           self.currentTurn = (currentTurn + 1) %2
 
           #makes computer move, there should be a better way to do this...
@@ -95,6 +135,7 @@ class Game
         return true
       end
     end
+    
     return false
   end
 
@@ -119,7 +160,7 @@ class Game
       end
       
       if (val.include? "otto" )|| (val.include? "toot")
-	return true
+        return true
       end
     
       #check columns for win
@@ -129,7 +170,7 @@ class Game
       end
 
       if (val.include? "otto") || (val.include? "toot")
-	return true
+        return true
       end
 
       #check diagonals for win
@@ -144,7 +185,7 @@ class Game
       end
 
       if (val.include? "otto") || (val.include? "toot")
-	return true
+        return true
       end
     
       count = 0
@@ -158,7 +199,7 @@ class Game
       end
      
       if (val.include? "otto") || (val.include? "toot")
-	return true
+        return true
       end
 
       return false

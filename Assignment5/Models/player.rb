@@ -5,7 +5,7 @@ class Player
   def initialize()
     @type = 'empty'
     @name = ''
-    @allowed_types = ['human','bot_easy','bot_hard']
+    @allowed_types = ['human', 'server_human','bot_easy','bot_hard']
   end
 
   def type=(x)

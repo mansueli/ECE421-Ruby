@@ -58,7 +58,15 @@ class Gameview < Gtk::Builder
     }
     self['start'].signal_connect("clicked") {
       @game.newGame(type, self, @player1, @player2)
-      
+    }
+    self['startserver'].signal_connect("clicked") {
+      @player2.type = 'server_human'
+      @game.newGameS(type, self, @player1, @player2)
+    }
+    #doesnt work
+    self['loadserver'].signal_connect("clicked") {
+      @player2.type = 'server_human'
+      @game.loadGame(type, self, @player1, @player2, state)
     }
 
     7.times do |col|
