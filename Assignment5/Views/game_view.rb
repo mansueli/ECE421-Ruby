@@ -80,9 +80,6 @@ class Gameview < Gtk::Builder
         end
       end
       self['boardGrid'].show
-    
-
-
     self['main'].show_all
   end
 

@@ -5,6 +5,7 @@ require '../Views/game_view.rb'
 require 'singleton'
 require 'observer'
 require 'matrix'
+require 'xmlrpc/client'
 
 class Game
   include Singleton
@@ -25,16 +26,23 @@ class Game
     @state = Matrix.build(6,7) {Disc.new()}
     @currentTurn = 0
     @view = gview
+    @server = XMLRPC::Client.new(ENV['HOSTNAME'], "/RPC2", 50525)
   end
 
   def updateViews(val = false)
     @view.update(val)
   end
 
+  def recvMove(player)
+    makeMove(@server.call('move.recvMove', player), player)
+  end
+
   #will only make the move if its the players turn
   def makeMove(move, player)
     #Contracts.makeMove_pre(player, move, self)
     placed = nil
+
+    puts @server.call('move.recvMove', 'test')
 
     if(@pTurn[currentTurn].eql? player)
       
@@ -43,6 +51,7 @@ class Game
         if(@state.element(5-i,move).type == 'empty')
           @state.element(5-i,move).type = players[currentTurn]
           placed = true
+          #@server.call('move.makeMove', @pTurn.index(player), move)
           if(draw())
             puts "Game is draw"
             updateViews(true)
@@ -67,9 +76,9 @@ class Game
             end
             makeMove(Computer.makeMove(level, self, @pTurn[currentTurn]), @pTurn[currentTurn])
             if(win(5-i, move, currentTurn))
-	      puts "Player #{currentTurn+1} wins"
-	      updateViews(true)
-	      #TODO end game here somehow
+              puts "Player #{currentTurn+1} wins"
+              updateViews(true)
+              #TODO end game here somehow
               return true
             end
           end
