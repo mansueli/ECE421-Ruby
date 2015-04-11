@@ -46,31 +46,40 @@ class MoveHandler
 		res = @db.query("select lastplayer from games
 			where game_id = '#{game_id}'")
 
-		res.each_hash {|h| @player =  h['lastplayer']}
+		lastplayer = nil
+		res.each_hash {|h| lastplayer =  h['lastplayer']}
 
-		if @player != player
-			@player = player
-   			@move = move
+		if lastplayer != player
    			@db.query("UPDATE games
-   				SET lastplayer = '#{player}', lastmove = '#{move}''
+   				SET lastplayer = '#{player}', lastmove = '#{move}'
    				WHERE game_id = '#{game_id}'
               ")
+   			return true
 		end
+		return false
 		#puts @move
 		#puts @player   		
 	end
 
-   	def recvMove(game_id, player)
+   	def recvMove(game_id)
 		res = @db.query("select * from games
 			where game_id = '#{game_id}'")
 
-		res.each_hash {|h| @player =  h['lastplayer'], @move = h['lastmove']}
+		lastmove = -1
+		res.each_hash {|h| lastmove = h['lastmove']}
 
-   		if @player == player
-   			return @move
-   		else
-   			return -1
-   		end
+		return lastmove
+   	end
+
+   	def game_end(game_id)
+   		res = @db.query("select result from results
+				where game_id = '#{game_id}'")
+
+   		result = -1
+		if res.num_rows > 0
+			res.each_hash {|h| result = h['result']}
+		end
+		return result
    	end
 
    	def game_over(game_id, status, player = '')

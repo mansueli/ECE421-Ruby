@@ -60,6 +60,7 @@ class Gameview < Gtk::Builder
       @game.newGame(type, self, @player1, @player2)
     }
     self['startserver'].signal_connect("clicked") {
+      @player1.name = self['username'].text
       @player2.type = 'server_human'
       @game.newGameS(type, self, @player1, @player2)
     }

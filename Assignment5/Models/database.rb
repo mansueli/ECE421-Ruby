@@ -23,10 +23,11 @@ require 'mysql'
               )
             ")
    rep = 'reptle'
-   @db.query("INSERT INTO games (player1, player2, game_type)
+=begin
+   @db.query("INSERT INTO games (player1, player2, game_type, lastplayer)
                 VALUES
-                  ('#{rep}', 'frog', '4'),
-                  ('fish', 'racoon', 'otto')
+                  ('#{rep}', 'frog', '4', 'lala'),
+                  ('fish', 'racoon', 'otto', 'laala')
               ")
    puts "Number of rows inserted: #{@db.affected_rows}"
 
@@ -39,13 +40,16 @@ require 'mysql'
               )
             ")
 
-res2 = @db.query("select game_id from games
-  where player1 = 'reptle' and game_type = '4'")
-game = nil;
-res2.each_hash {|h| game = h['game_id']}
+game = nil
+game_id = 1
+res2 = @db.query("select lastplayer from games
+  where game_id = '#{game_id}'")
+
+res2.each_hash {|h| game =  h['lastplayer']}
 #puts game_id
 puts 'here'
 puts game
+=end
 
 res = @db.query('describe games')
 

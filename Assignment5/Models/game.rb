@@ -41,6 +41,11 @@ class Game
     @view = gview
     @server = XMLRPC::Client.new(ENV['HOSTNAME'], "/RPC2", 50525)
     @game_id, @currentTurn = @server.call('move.createGame', p1.name, type)
+    if (@currentTurn == 1)
+      gview['message'].text = "game created"
+    else
+      gview['message'].text = "game joined"
+    end
     puts @game_id
     puts @currentTurn
   end
@@ -64,7 +69,7 @@ class Game
   end
 
   def recvMove(player)
-    return @server.call('move.recvMove', @game_id, player.name)
+    return @server.call('move.recvMove', @game_id)
   end
 
   #will only make the move if its the players turn
@@ -72,35 +77,46 @@ class Game
     #Contracts.makeMove_pre(player, move, self)
     placed = nil
 
-    puts player.type
-    puts @pTurn[currentTurn].eql? player
+    if (@server.call('move.game_end', @game_id) != -1)
+      @view['message'].text = "Game has ended"
+      return false
+    end
 
     if (@pTurn[currentTurn].type == 'server_human')
-      move = recvMove(@pTurn[currentTurn])
+      move = recvMove(@pTurn[currentTurn]).to_i
       player = @pTurn[currentTurn]
     end
 
-    if(@pTurn[currentTurn].eql? player && move != -1)
+    puts player.type
+    puts @pTurn[currentTurn].eql? player
+    puts @game_id
+    puts move
+
+    if((@pTurn[currentTurn].eql? player) && (move != -1))
+      puts 'here'
       placed = false
 
       for i in 0..5
         if(@state.element(5-i,move).type == 'empty')
+          @server.call('move.makeMove', @game_id, player.name, move)
+          @view['message'].text = "Move made"
           @state.element(5-i,move).type = players[currentTurn]
           placed = true
-          @server.call('move.makeMove', @game_id, player.name, move)
 
           if(draw())
+            @view['message'].text = "Game is draw"
             puts "Game is draw"
             @server.call('move.game_over', 0)
-            updateViews(true)
+            #updateViews(true)
             #TODO end game here somehow
             return true
           end
 
           if(win(5-i, move, currentTurn))
+            @view['message'].text = "Player #{currentTurn+1} wins"
             puts "Player #{currentTurn+1} wins"
             @server.call('move.game_over', 1, player)
-            updateViews(true)
+            #updateViews(true)
             #TODO end game here somehow
             return true
           end
@@ -108,7 +124,7 @@ class Game
           self.currentTurn = (currentTurn + 1) %2
 
           #makes computer move, there should be a better way to do this...
-          if (@pTurn[currentTurn].type != 'human')
+          if (@pTurn[currentTurn].type != 'human' && @pTurn[currentTurn].type != 'server_human')
             if (@pTurn[currentTurn].type != 'bot_easy')
               level = 0
             else
@@ -116,6 +132,7 @@ class Game
             end
             makeMove(Computer.makeMove(level, self, @pTurn[currentTurn]), @pTurn[currentTurn])
             if(win(5-i, move, currentTurn))
+              @view['message'].text = "Player #{currentTurn+1} wins"
               puts "Player #{currentTurn+1} wins"
               updateViews(true)
               #TODO end game here somehow
@@ -127,6 +144,8 @@ class Game
           break
         end
       end
+
+      puts 'here'
 
       if placed == false
         puts 'no room in column'
