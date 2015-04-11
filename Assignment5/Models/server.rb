@@ -6,9 +6,12 @@ port = 50525
 
 class MoveHandler
 	def initialize
-		@player = ''
-		@move = -1
 		@db = Mysql.new("mysqlsrv.ece.ualberta.ca", "ece421usr3" , "a421Psn403", "ece421grp3", 13020)
+	end
+
+	def getStats()
+		res = @db.query("select game_id, result from results")
+		return res
 	end
 
 	def createGame(player, type)

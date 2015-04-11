@@ -23,7 +23,7 @@ require 'mysql'
               )
             ")
    rep = 'reptle'
-=begin
+
    @db.query("INSERT INTO games (player1, player2, game_type, lastplayer)
                 VALUES
                   ('#{rep}', 'frog', '4', 'lala'),
@@ -39,6 +39,11 @@ require 'mysql'
                 FOREIGN KEY(game_id) REFERENCES games(game_id)
               )
             ")
+   @db.query("INSERT INTO results (game_id, result)
+                VALUES
+                  (1, 'draw'),
+                  (2, 'racoon')
+              ")
 
 game = nil
 game_id = 1
@@ -49,7 +54,7 @@ res2.each_hash {|h| game =  h['lastplayer']}
 #puts game_id
 puts 'here'
 puts game
-=end
+
 
 res = @db.query('describe games')
 

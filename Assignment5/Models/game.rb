@@ -113,9 +113,9 @@ class Game
           end
 
           if(win(5-i, move, currentTurn))
+            @server.call('move.game_over', 1, player)
             @view['message'].text = "Player #{currentTurn+1} wins"
             puts "Player #{currentTurn+1} wins"
-            @server.call('move.game_over', 1, player)
             #updateViews(true)
             #TODO end game here somehow
             return true
